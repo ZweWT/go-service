@@ -32,6 +32,8 @@ kind-up:
 		--image kindest/node:v1.26.0@sha256:45aa9ecb5f3800932e9e35e9a45c61324d656cf5bc5dd0d6adfc1b0f8168ec5f \
 		--name $(KIND_CLUSTER) \
 		--config zarf/k8s/kind/kind-config.yaml 
+	
+	kubectl config set-context --current --namespace=service-system
 
 kind-down:
 	kind delete cluster --name $(KIND_CLUSTER)
