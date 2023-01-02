@@ -8,14 +8,15 @@ run:
 
 VERSION := 1.0
 
-all: service
+all: build
 
 build: 
 	docker build \
 		-f zarf/docker/dockerfile \
 		-t service-amd64:$(VERSION) \
 		--build-arg BUILD_REF=$(VERSION) \
-		--build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` \ 
+		--build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` \
+		.
 
 # =============================================================================================
 # Running from within k8s/kind
@@ -28,11 +29,9 @@ KIND_CLUSTER := starter-cluster
 
 kind-up: 
 	kind create cluster \
-		--image \
-		--name $(KIND_CLUSTER)
-		--config zarf/k8s/kind/kind-config.yaml
-
-	kubectl config set-context --current --namespace=service-system 
+		--image kindest/node:v1.26.0@sha256:45aa9ecb5f3800932e9e35e9a45c61324d656cf5bc5dd0d6adfc1b0f8168ec5f \
+		--name $(KIND_CLUSTER) \
+		--config zarf/k8s/kind/kind-config.yaml 
 
 kind-down:
 	kind delete cluster --name $(KIND_CLUSTER)

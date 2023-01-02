@@ -4,7 +4,7 @@ kind: Namespace
 metadata: 
   name: service-system 
 ---
-
+ 
 apiVersion: apps/v1
 kind: Deployment
 metadata: 
