@@ -19,7 +19,6 @@ var build = "develop"
 
 func main() {
 
-	fmt.Printf("build: %s", build)
 	// construct applicatin logger
 	log, err := initLogger("SALES-API")
 	if err != nil {
