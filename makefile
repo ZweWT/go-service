@@ -1,12 +1,17 @@
 SHELL := /bin/bash
 
+# =============================================================================================
+# cmdline dashboard for analytics and profiling
+# go install github.com/divan/expvarmon@latest
+# expvarmon -ports=":4000" -vars="build, requests, goroutines, errors, panics, mem:memstats.Alloc"
+
 run: 
 	go run app/services/sales-api/main.go | go run app/services/tooling/logfmt/main.go
 
 tidy: 
 	go mod tidy
 	go mod vendor
-	
+
 # =============================================================================================
 # Building containers
 

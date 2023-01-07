@@ -2,13 +2,16 @@ package main
 
 import (
 	"errors"
+	"expvar"
 	"fmt"
+	"net/http"
 	"os"
 	"os/signal"
 	"runtime"
 	"syscall"
 	"time"
 
+	"github.com/ZweWT/go-service/app/services/sales-api/handlers"
 	"github.com/ardanlabs/conf/v3"
 	"go.uber.org/automaxprocs/maxprocs"
 	"go.uber.org/zap"
@@ -90,6 +93,26 @@ func run(log *zap.SugaredLogger) error {
 		return fmt.Errorf("generating config for output: %w", err)
 	}
 	log.Infow("startup", "config", out)
+
+	expvar.NewString("build").Set(build)
+
+	// ==========================================================================
+	// Start Debug Service
+	log.Infow("startup", "status", "debug router started", "host", cfg.Web.DebugHost)
+
+	// The Debug function returns a mux to listen and serve on for all the debug
+	// related endpoints. This includes the standard library endpoints.
+
+	// Construct the mux for debug calls.
+	debugMux := handlers.DebugStandardLibraryMux()
+
+	//start the service listening for debug requests.
+
+	go func() {
+		if err := http.ListenAndServe(cfg.Web.DebugHost, debugMux); err != nil {
+			log.Errorw("shutdown", "status", "debug router closed", "host", cfg.Web.DebugHost, "ERROR", err)
+		}
+	}()
 
 	// ==========================================================================
 	shutdown := make(chan os.Signal, 1)
