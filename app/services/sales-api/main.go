@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"os"
+	"runtime"
 
+	"go.uber.org/automaxprocs/maxprocs"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -31,6 +33,11 @@ func main() {
 }
 
 func run(log *zap.SugaredLogger) error {
+	if _, err := maxprocs.Set(); err != nil {
+		return fmt.Errorf("max procs: %w", err)
+	}
+
+	log.Infow("start up", "GOMAXPROCS", runtime.GOMAXPROCS(0))
 	return nil
 }
 
